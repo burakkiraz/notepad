@@ -1,78 +1,78 @@
 import sys
 import os
 
-from PyQt5.QtWidgets import QWidget,QApplication,QTextEdit,QHBoxLayout,QPushButton,QVBoxLayout,QLabel,QFileDialog,QAction,qApp,QMainWindow
+from PyQt5.QtWidgets import QWidget,QApplication,QTextEdit,QHBoxLayout,QPushButton,QVBoxLayout,QFileDialog,QAction,qApp,QMainWindow
 
 class Notepad(QWidget):
     def __init__(self):
         super().__init__()
         self.init_ui()
     def init_ui(self):
-        self.yazi_alani = QTextEdit()
-        self.temizle = QPushButton("Temizle")
-        self.ac = QPushButton("Aç")
-        self.dosya_olustur = QPushButton("Yeni")
+        self.text_area = QTextEdit()
+        self.clear = QPushButton("Clear All")
+        self.open = QPushButton("Open File")
+        self.new_file = QPushButton("New File")
 
         h_box = QHBoxLayout()
-        h_box.addWidget(self.temizle)
-        h_box.addWidget(self.ac)
-        h_box.addWidget(self.dosya_olustur)
+        h_box.addWidget(self.clear)
+        h_box.addWidget(self.open)
+        h_box.addWidget(self.new_file)
 
         v_box = QVBoxLayout()
-        v_box.addWidget(self.yazi_alani)
+        v_box.addWidget(self.text_area)
         v_box.addLayout(h_box)
 
         self.setLayout(v_box)
-        self.setWindowTitle("Note Pad")
-        self.temizle.clicked.connect(self.sil)
-        self.ac.clicked.connect(self.dosya_ac)
-        self.dosya_olustur.clicked.connect(self.yeni_dosya)
+        self.setWindowTitle("NotePad")
+        self.clear.clicked.connect(self.delete)
+        self.open.clicked.connect(self.open_file)
+        self.new_file.clicked.connect(self.new_fille)
 
-    def sil(self):
-        self.yazi_alani.clear()
-    def dosya_ac(self):
-        dosya_ismi = QFileDialog.getOpenFileName(self,"Dosya Aç",os.getenv("Desktop"))
-        with open(dosya_ismi[0],"r") as file:
-            self.yazi_alani.setText(file.read())
-    def yeni_dosya(self):
-        dosya_ismi = QFileDialog.getSaveFileName(self, "Dosya Kaydet",os.getenv("Desktop"))
-        with open(dosya_ismi[0],"w") as file:
-            file.write(self.yazi_alani.toPlainText())
+    def delete(self):
+        self.text_area.clear()
+    def open_file(self):
+        file_name = QFileDialog.getOpenFileName(self,"Open File",os.getenv("Desktop"))
+        with open(file_name[0],"r") as file:
+            self.text_area.setText(file.read())
+    def new_fille(self):
+        file_name = QFileDialog.getSaveFileName(self, "Save File",os.getenv("Desktop"))
+        with open(file_name[0],"w") as file:
+            file.write(self.text_area.toPlainText())
 
 class Menu(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.pencere = Notepad()
-        self.setCentralWidget(self.pencere)
-        self.menuleri_olustur()
+        self.windoww = Notepad()
+        self.setCentralWidget(self.windoww)
+        self.create_menu()
         self.setWindowTitle("Note Pad")
         self.show()
-    def menuleri_olustur(self):
+    def create_menu(self):
         menubar = self.menuBar()
-        dosya = menubar.addMenu("Dosya")
-        dosya_ac = QAction("Dosya Aç",self)
-        dosya_ac.setShortcut("Ctrl+O")
-        dosya_kaydet = QAction("Dosya Kaydet",self)
-        dosya_kaydet.setShortcut("Ctrl+S")
-        temizle = QAction("Temizle",self)
-        temizle.setShortcut("Ctrl+D")
-        cikis = QAction("Çıkış",self)
-        cikis.setShortcut("Ctrl+Q")
-        dosya.addAction(dosya_ac)
-        dosya.addAction(dosya_kaydet)
-        dosya.addAction(temizle)
-        dosya.addAction(cikis)
+        file = menubar.addMenu("File")
+        open_file = QAction("Open File",self)
+        open_file.setShortcut("Ctrl+O")
+        save_file = QAction("Save File",self)
+        save_file.setShortcut("Ctrl+S")
+        clear = QAction("Clear",self)
+        clear.setShortcut("Ctrl+D")
+        exit = QAction("Exit",self)
+        exit.setShortcut("Ctrl+Q")
+        file.addAction(open_file)
+        file.addAction(save_file)
+        file.addAction(clear)
+        file.addAction(exit)
 
-        dosya.triggered.connect(self.response)
+        file.triggered.connect(self.response)
 
     def response(self,action):
-        if action.text() == "Dosya Aç":
-            self.pencere.dosya_ac()
-        elif action.text() == "Dosya Kaydet":
-            self.pencere.yeni_dosya()
-        elif action.text() == "Temizle":
-            self.pencere.sil()
-        elif action.text() == "Çıkış":
+        if action.text() == "Open File":
+            self.windoww.open_file()
+        elif action.text() == "Save File":
+            self.windoww.yeni_file()
+        elif action.text() == "Clear":
+            self.windoww.delete()
+        elif action.text() == "Exit":
             qApp.quit()
 
 
