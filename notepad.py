@@ -69,7 +69,7 @@ class Menu(QMainWindow):
         if action.text() == "Open File":
             self.windoww.open_file()
         elif action.text() == "Save File":
-            self.windoww.yeni_file()
+            self.windoww.new_fille()
         elif action.text() == "Clear":
             self.windoww.delete()
         elif action.text() == "Exit":
